@@ -1,5 +1,5 @@
 import React from "react";
-import Select from './Select'
+
 function TableRows({rowsData, deleteTableRows, handleChange}) {
     return (
 
