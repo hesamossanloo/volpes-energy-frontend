@@ -1,23 +1,17 @@
-FROM node:lts-alpine as builder
+# build environment
+FROM node:16-alpine as react-build
+WORKDIR /app
+COPY . ./
+RUN yarn
+RUN yarn build
 
-# by only copying package.json, before running npm install. We can leverage dockers caching strategy for steps. Otherwise docker needs to run npm install every time you change any of the code.
-COPY package.json ./
-RUN npm install
-RUN mkdir /app-ui
-RUN mv ./node_modules ./app-ui
-WORKDIR /app-ui
-COPY . .
-# in this step the static React files are created. For more info see package.json
-RUN npm run build
-
+# server environment
 FROM nginx:alpine
+COPY nginx.conf /etc/nginx/conf.d/configfile.template
 
-# copy the .conf template
-COPY ./.nginx/nginx.conf /etc/nginx/nginx.conf
+COPY --from=react-build /app/build /usr/share/nginx/html
 
-## Remove default nginx index page and replace it with the static files we created in the first step
-RUN rm -rf /usr/share/nginx/html/*
-COPY --from=builder /app-ui/build /usr/share/nginx/html
-EXPOSE 80
-
-CMD nginx -g 'daemon off;'
+ENV PORT 8080
+ENV HOST 0.0.0.0
+EXPOSE 8080
+CMD sh -c "envsubst '\$PORT' < /etc/nginx/conf.d/configfile.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
