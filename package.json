@@ -11,6 +11,7 @@
     "@testing-library/jest-dom": "^5.16.5",
     "@types/react": "latest",
     "@types/react-dom": "latest",
+    "bootstrap": "^5.2.3",
     "react": "latest",
     "react-dom": "latest",
     "typescript": "latest",
