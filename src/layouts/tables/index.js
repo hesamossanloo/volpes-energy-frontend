@@ -12,12 +12,12 @@
 
  * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
  */
-import React, { useState, useEffect } from "react";
+import React, {useEffect, useState} from "react";
 
 // @mui material components
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
-import { CircularProgress, FormControlLabel, Switch } from "@material-ui/core";
+import {CircularProgress, FormControlLabel, Switch} from "@material-ui/core";
 
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
@@ -29,29 +29,18 @@ import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
 import EditableTable from "../../examples/Tables/EditableTable";
 import PowerTable from "../../examples/Tables/PowerTable";
-import { useMaterialUIController } from "../../context";
+import {useMaterialUIController} from "../../context";
 import StackedPlotChart from "../../examples/Charts/StackedCharts";
 
 
 function Tables() {
-  const [EVSchedule, setEVSchedule] = useState(null);
   const [loading, setLoading] = useState(true);
   const [controller, dispatch] = useMaterialUIController();
   const { EVTableData } = controller;
   const [showTable, setShowTable] = useState(false);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const response = await fetch("https://volpes-energy-backend-fiiwhtua3a-ew.a.run.app/ev_scheduler");
-      const jsonData = await response.json();
-      setEVSchedule(jsonData?.power);
-      setLoading(false);
-    };
-    fetchData();
-  }, []);
-
   useEffect(()=>{
-    EVTableData && setLoading(false);
+    Object.entries(EVTableData).length > 0 && setLoading(false);
   }, [EVTableData])
 
   const toggleTable = () => {
@@ -114,10 +103,10 @@ function Tables() {
                   />
                 </MDBox>
                 <MDBox pt={3}>
-                  {showTable && EVSchedule ? <PowerTable data={EVSchedule} /> : null}
+                  {showTable && EVTableData ? <PowerTable data={EVTableData} /> : null}
                 </MDBox>
                 <MDBox pt={3}>
-                  {EVSchedule ? <StackedPlotChart data={EVSchedule} /> : null}
+                  {EVTableData ? <StackedPlotChart data={EVTableData} /> : null}
                 </MDBox>
               </Card>
             </Grid>
