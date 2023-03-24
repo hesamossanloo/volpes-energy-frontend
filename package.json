@@ -1,5 +1,5 @@
 {
-  "name": "volpes-dashboard",
+  "name": "volpes-energy-frontend",
   "version": "0.1.0",
   "private": true,
   "author": "Hesam Ossanoo",
@@ -20,6 +20,7 @@
     "@testing-library/jest-dom": "5.16.2",
     "@testing-library/react": "12.1.2",
     "@testing-library/user-event": "13.5.0",
+    "axios": "^1.3.4",
     "chart.js": "3.4.1",
     "chroma-js": "2.4.2",
     "prop-types": "15.8.1",
@@ -38,7 +39,7 @@
     "yup": "0.32.11"
   },
   "scripts": {
-    "start": "GENERATE_SOURCEMAP=false && react-scripts start",
+    "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",

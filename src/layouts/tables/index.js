@@ -31,91 +31,108 @@ import EditableTable from "../../examples/Tables/EditableTable";
 import PowerTable from "../../examples/Tables/PowerTable";
 import {useMaterialUIController} from "../../context";
 import StackedPlotChart from "../../examples/Charts/StackedCharts";
+import DefaultInfoCard from "../../examples/Cards/InfoCards/DefaultInfoCard";
+import {green} from "@mui/material/colors";
 
 
 function Tables() {
-  const [loading, setLoading] = useState(true);
-  const [controller, dispatch] = useMaterialUIController();
-  const { EVTableData } = controller;
-  const [showTable, setShowTable] = useState(false);
+    const [loading, setLoading] = useState(true);
+    const [controller, dispatch] = useMaterialUIController();
+    const {EVTableData} = controller;
+    const [showTable, setShowTable] = useState(false);
 
-  useEffect(()=>{
-    Object.entries(EVTableData).length > 0 && setLoading(false);
-  }, [EVTableData])
+    useEffect(() => {
+        Object.entries(EVTableData).length > 0 && setLoading(false);
+    }, [EVTableData])
 
-  const toggleTable = () => {
-    setShowTable(!showTable);
-  };
+    const toggleTable = () => {
+        setShowTable(!showTable);
+    };
 
-  return (
-    <DashboardLayout>
-      <DashboardNavbar />
-      <MDBox pt={6} pb={3}>
-        <Grid container spacing={6}>
-          <Grid item xs={12}>
-            <Card>
-              <MDBox
-                mx={2}
-                mt={-3}
-                py={3}
-                px={2}
-                variant="gradient"
-                bgColor="info"
-                borderRadius="lg"
-                coloredShadow="info"
-              >
-                <MDTypography variant="h6" color="white">
-                  EVs
-                </MDTypography>
-              </MDBox>
-              <MDBox pt={3}>
-                <EditableTable />
-              </MDBox>
-            </Card>
-          </Grid>
-          {loading ? (
-            <Grid item xs={12}>
-              <MDBox pt={3} sx={{ textAlign: "center" }}>
-                <CircularProgress />
-              </MDBox>
-            </Grid>
-          ) : (
-            <Grid item xs={12}>
-              <Card>
-                <MDBox
-                  mx={2}
-                  mt={-3}
-                  py={3}
-                  px={2}
-                  variant="gradient"
-                  bgColor="info"
-                  borderRadius="lg"
-                  coloredShadow="info"
-                >
-                  <MDTypography variant="h6" color="white">
-                    EV Schedule
-                  </MDTypography>
-                </MDBox>
-                <MDBox pt={3} pr={2} sx={{ textAlign: "right" }}>
-                  <FormControlLabel
-                    control={<Switch checked={showTable} onChange={toggleTable} />}
-                    label="Show Table"
-                  />
-                </MDBox>
-                <MDBox pt={3}>
-                  {showTable && EVTableData ? <PowerTable data={EVTableData} /> : null}
-                </MDBox>
-                <MDBox pt={3}>
-                  {EVTableData ? <StackedPlotChart data={EVTableData} /> : null}
-                </MDBox>
-              </Card>
-            </Grid>
-          )}
-        </Grid>
-      </MDBox>
-      <Footer />
-    </DashboardLayout>
-  );
+    return (
+        <DashboardLayout>
+            <DashboardNavbar/>
+            <MDBox pt={6} pb={3}>
+                <Grid container spacing={6}>
+                    <Grid item xs={12}>
+                        <Card>
+                            <MDBox
+                                mx={2}
+                                mt={-3}
+                                py={3}
+                                px={2}
+                                variant="gradient"
+                                bgColor="info"
+                                borderRadius="lg"
+                                coloredShadow="info"
+                            >
+                                <MDTypography variant="h6" color="white">
+                                    EVs
+                                </MDTypography>
+                            </MDBox>
+                            <MDBox pt={3}>
+                                <EditableTable/>
+                            </MDBox>
+                        </Card>
+                    </Grid>
+                    {loading ? (
+                        <Grid item xs={12}>
+                            <MDBox pt={3} sx={{textAlign: "center"}}>
+                                <CircularProgress/>
+                            </MDBox>
+                        </Grid>
+                    ) : (
+                        <Grid item xs={12}>
+                            <Card>
+                                <MDBox
+                                    mx={2}
+                                    mt={-3}
+                                    py={3}
+                                    px={2}
+                                    variant="gradient"
+                                    bgColor="info"
+                                    borderRadius="lg"
+                                    coloredShadow="info"
+                                >
+                                    <MDTypography variant="h6" color="white">
+                                        EV Schedule
+                                    </MDTypography>
+                                </MDBox>
+                                <MDBox pt={3} pr={2} sx={{textAlign: "right"}}>
+                                    <FormControlLabel
+                                        control={<Switch checked={showTable} onChange={toggleTable}/>}
+                                        label="Show Table"
+                                    />
+                                </MDBox>
+                                <MDBox pt={3}>
+                                    {showTable && EVTableData ? <PowerTable data={EVTableData}/> : null}
+                                </MDBox>
+                                <MDBox pt={3}>
+                                    {EVTableData ?
+                                        <>
+                                            <MDTypography variant="h6" color="white">
+                                                EV Schedule
+                                            </MDTypography>
+                                            <DefaultInfoCard
+                                                iconSX={{color: green[500]}}
+                                                color="white"
+                                                icon="energy_savings_leaf"
+                                                title="Save"
+                                                description="Power Consumption Savings"
+                                                value={`${EVTableData?.savings}`}
+                                            />
+                                            <StackedPlotChart data={EVTableData}/>
+                                        </>
+                                        : null}
+                                </MDBox>
+                            </Card>
+                        </Grid>
+                    )}
+                </Grid>
+            </MDBox>
+            <Footer/>
+        </DashboardLayout>
+    );
 }
 
 export default Tables;

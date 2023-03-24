@@ -1,9 +1,13 @@
 import React, {useState} from "react";
-import {makeStyles} from "@material-ui/core/styles";
 import {
     Button,
+    FormControl,
     Grid,
+    InputLabel,
+    makeStyles,
+    MenuItem,
     Paper,
+    Select,
     Table,
     TableBody,
     TableCell,
@@ -43,6 +47,12 @@ const useStyles = makeStyles((theme) => ({
     },
     center: {
         textAlign: "center"
+    },
+    left: {
+        textAlign: "left"
+    },
+    right: {
+        textAlign: "right"
     }
 }));
 
@@ -110,7 +120,6 @@ const tableHeader = [
     {label: "Action", data: "action"}
 ];
 
-const EV_SCHEDULE_URL = "http://localhost:8010/proxy/ev_scheduler"
 // const EV_SCHEDULE_URL = "https://volpes-energy-backend-fiiwhtua3a-ew.a.run.app/ev_scheduler"
 
 const EditableTable = (props) => {
@@ -118,6 +127,76 @@ const EditableTable = (props) => {
     const [editingId, setEditingId] = useState(null);
     const [rows, setRows] = useState(EVList);
     const [controller, dispatch] = useMaterialUIController();
+    const [file, setFile] = useState(null);
+    const [fileType, setFileType] = useState('json');
+
+    const handleFileChange = (event) => {
+        setFile(event.target.files[0]);
+    };
+
+    const handleFileTypeChange = (event) => {
+        setFileType(event.target.value);
+    };
+
+    function normalizePayload(payload) {
+        let resp = payload.data
+        if (payload.data.indexOf("\n") !== -1) {
+            resp = resp.replaceAll("\n", "")
+        }
+        resp = JSON.parse(resp)
+        return resp
+    }
+
+    const handleSubmitData = async () => {
+        const payload = rows.reduce((obj, cur, i) => {
+            return {...obj, [i]: cur};
+        }, {})
+
+        try {
+            const resp = await fetch(`${process.env.REACT_APP_VOLPES_ENERGY_API}/ev_scheduler`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            })
+
+            if (resp.status === 200) {
+                const data = await resp.json()
+                setEVTableData(dispatch, data)
+            }
+        } catch (e) {
+            console.error(e)
+        }
+    }
+    const handleUploadSubmit = async () => {
+        const formData = new FormData();
+        formData.append('file', file);
+        let payload = {data: await file.text()}
+
+        payload = normalizePayload(payload)
+
+        const body = fileType === 'json' ? JSON.stringify(payload) : payload
+        let postReq = {
+            method: 'POST',
+            body
+        }
+
+        postReq = fileType === 'json' ? {...postReq, headers: {'Content-Type': 'application/json'}} : postReq
+
+        try {
+            const resp = await fetch(`${process.env.REACT_APP_VOLPES_ENERGY_API}/ev_scheduler`, postReq)
+
+            if (resp.status === 200) {
+                const data = await resp.json()
+                setFile(null)
+                document.querySelector("input[type=file]").value = '';
+                setEVTableData(dispatch, data)
+            }
+        } catch (e) {
+            console.error(e)
+        }
+    }
 
     const addRandomRow = () => {
         const newRandomEV = {
@@ -186,27 +265,6 @@ const EditableTable = (props) => {
         );
     };
 
-    const handleSubmitData = async () => {
-        const payload = rows.reduce((obj, cur, i) => {
-            return {...obj, [i]: cur};
-        }, {})
-        try {
-            const resp = await fetch(EV_SCHEDULE_URL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(payload)
-            })
-
-            if (resp.status === 200) {
-                const data = await resp.json()
-                setEVTableData(dispatch, data?.power)
-            }
-        } catch (e) {
-            console.error(e)
-        }
-    }
     return (
         <TableContainer sx={{boxShadow: "none"}} component={Paper} className={classes.tableContainer}>
             <Table className={classes.table} aria-label="simple table">
@@ -350,6 +408,40 @@ const EditableTable = (props) => {
                         <TableCell colSpan={12}>
                             <Grid container>
                                 <Grid item lg={4} className={classes.center}>
+                                    <FormControl>
+                                        <InputLabel>File Type</InputLabel>
+                                        <Select value={fileType} onChange={handleFileTypeChange}>
+                                            <MenuItem value="json">JSON</MenuItem>
+                                            <MenuItem value="csv">CSV</MenuItem>
+                                        </Select>
+                                    </FormControl>
+                                </Grid>
+                                <Grid item lg={4} className={classes.center}>
+                                    <FormControl>
+                                        <InputLabel>File Upload</InputLabel>
+                                        <input type="file" onChange={handleFileChange}/>
+                                    </FormControl>
+                                </Grid>
+                                <Grid item lg={4} className={classes.center}>
+                                    <Typography>
+                                        <Button
+                                            variant="contained"
+                                            color="secondary"
+                                            disabled={!file}
+                                            onClick={handleUploadSubmit}
+                                            className={classes.button}
+                                        >
+                                            Submit Upload
+                                        </Button>
+                                    </Typography>
+                                </Grid>
+                            </Grid>
+                        </TableCell>
+                    </TableRow>
+                    <TableRow>
+                        <TableCell colSpan={12}>
+                            <Grid container>
+                                <Grid item lg={4} className={classes.center}>
                                     <Typography>
                                         <Button
                                             variant="contained"
@@ -374,18 +466,19 @@ const EditableTable = (props) => {
                                             Add Empty Row
                                         </Button>
                                     </Typography>
-                                </Grid><Grid item lg={4} className={classes.center}>
-                                <Typography>
-                                    <Button
-                                        variant="contained"
-                                        color="secondary"
-                                        onClick={handleSubmitData}
-                                        className={classes.button}
-                                    >
-                                        Submit
-                                    </Button>
-                                </Typography>
-                            </Grid>
+                                </Grid>
+                                <Grid item lg={4} className={classes.center}>
+                                    <Typography>
+                                        <Button
+                                            variant="contained"
+                                            color="secondary"
+                                            onClick={handleSubmitData}
+                                            className={classes.button}
+                                        >
+                                            Submit Table Rows
+                                        </Button>
+                                    </Typography>
+                                </Grid>
                             </Grid>
                         </TableCell>
                     </TableRow>

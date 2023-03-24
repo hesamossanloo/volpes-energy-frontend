@@ -1,8 +1,8 @@
 import React from "react";
-import { ResponsiveContainer, AreaChart, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Area } from "recharts";
+import {Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis} from "recharts";
 
 const StackedPlotChart = ({ data }) => {
-  const chartData = Object.entries(data?.power).map(([time, values]) => {
+  const chartData = Object.entries(data?.power.power).map(([time, values]) => {
     const timeLabel = time.split(" ")[1];
     return { "time":timeLabel, ...values };
   });
@@ -16,7 +16,7 @@ const StackedPlotChart = ({ data }) => {
         <XAxis dataKey="time" />
         <YAxis />
         <Tooltip />
-        {Object.keys(data?.power).map((key, index) => {
+        {Object.keys(data?.power.power).map((key, index) => {
           const keyLabel = key.split(" ")[1];
           return <Area key={keyLabel} type="monotone" dataKey={index} stackId="1" stroke={colors[index]}
                        fill={colors[index]} />;

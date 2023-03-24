@@ -1,3 +1,30 @@
+# Volpes Energy Frontend
+A dashboard for customers to monitor and see the optimised schedule for their EVs
+
+# Local Development
+Since some browsers block CORS requests for security reasons. we are using a local cors proxy.
+So before starting the application you need to run the proxy in a separate terminal(bash, shell etc.)
+The local proxy expects the URL which we need to call. IN our case the URL to our API. So you need to 
+change it based on your need.
+
+## Start the application
+### Step 1: start the local cors proxy
+```
+lcp --proxyUrl https://volpes-energy-backend-fiiwhtua3a-ew.a.run.app
+```
+### Step 2 define your local environment in the .env file
+Be aware that the .env file is not committed GitHub, as it might include sensitive data.
+So you need to ask your teammates to give you the .env file with the values for local development
+
+### Step 3 install dependencies
+```
+yarn
+```
+### Step 4 start the web application
+```
+yarn start
+```
+
 # [Material Dashboard 2 React](http://demos.creative-tim.com/material-dashboard-react/#/dashboard?ref=readme-mdr) [![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social&logo=twitter)](https://twitter.com/intent/tweet?url=https://www.creative-tim.com/product/material-dashboard-react&text=Check%20Material%20Dashboard%202%20react%20made%20by%20@CreativeTim%20#webdesign%20#dashboard%20#materialdesign%20#react%20https://www.creative-tim.com/product/material-dashboard-react)
 
 ![version](https://img.shields.io/badge/version-2.1.0-blue.svg) [![GitHub issues open](https://img.shields.io/github/issues/creativetimofficial/material-dashboard-react.svg)](https://github.com/creativetimofficial/material-dashboard-react/issues?q=is%3Aopen+is%3Aissue) [![GitHub issues closed](https://img.shields.io/github/issues-closed-raw/creativetimofficial/material-dashboard-react.svg)](https://github.com/creativetimofficial/material-dashboard-react/issues?q=is%3Aissue+is%3Aclosed)
