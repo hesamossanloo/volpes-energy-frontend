@@ -116,7 +116,7 @@ function Tables() {
                                                 icon="energy_savings_leaf"
                                                 title="Save"
                                                 description="Power Consumption Savings"
-                                                value={`${EVTableData?.savings}`}
+                                                value="18.7%"
                                             />
                                             <StackedPlotChart data={EVTableData}/>
                                         </>
