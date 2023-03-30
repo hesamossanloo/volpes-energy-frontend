@@ -107,15 +107,12 @@ function Tables() {
                                 <MDBox pt={3}>
                                     {showTable && EVTableData ? <PowerTable data={EVTableData}/> : null}
                                 </MDBox>
-                                <MDBox pt={3}>
+                                <MDBox>
                                     {EVTableData ?
                                         <>
-                                            <MDTypography variant="h6" color="white">
-                                                EV Schedule
-                                            </MDTypography>
                                             <DefaultInfoCard
                                                 iconSX={{color: green[500]}}
-                                                color="white"
+                                                color="secondary"
                                                 icon="energy_savings_leaf"
                                                 title="Save"
                                                 description="Power Consumption Savings"
